@@ -93,6 +93,7 @@ global Rewards := [
     {name:"reward_fragment",weight:30},
     {name:"reward_fulgurorn",weight:10},
     {name:"reward_goldus",weight:50},
+    {name:"reward_goldus_effect",weight:50},
     {name:"reward_hagan",weight:10},
     {name:"reward_reaper_effect",weight:10},
     {name:"reward_slorm",weight:20},
@@ -109,6 +110,15 @@ If WinExist(WinTitle) {
                 WinActivate
         }
         try {
+            if ((ImageSearch(&FoundX, &FoundY, 1650, 260, 1920, 360, "slormancer_img\next_wave.png"))) {
+                If WinExist(WinTitle) {
+                    WinActivate
+                    MouseMove 1790,300
+                    Click "down"
+                    Sleep 10
+                    Click "up"
+                }
+            }
             if (!(ImageSearch(&FoundX, &FoundY, 1500, 0, 1700, 200, "slormancer_img\forge_icon.png"))) {
                 Sleep 1000
                 foundImages := ""
@@ -117,7 +127,7 @@ If WinExist(WinTitle) {
                 rightWeight := -1000
                 If WinExist(WinTitle) {
                     WinActivate
-                    MouseMove 100,100
+                    MouseMove 150,150
                     Click "down"
                     Sleep 10
                     Click "up"
@@ -144,7 +154,7 @@ If WinExist(WinTitle) {
                 }
                 If WinExist(WinTitle) {
                     WinActivate
-                    MouseMove 100,100
+                    MouseMove 150,150
                     Click "down"
                     Sleep 10
                     Click "up"
@@ -171,7 +181,7 @@ If WinExist(WinTitle) {
                 }
                 If WinExist(WinTitle) {
                     WinActivate
-                    MouseMove 100,100
+                    MouseMove 150,150
                     Click "down"
                     Sleep 10
                     Click "up"
