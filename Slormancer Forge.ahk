@@ -1,28 +1,55 @@
 #Requires AutoHotkey v2.0
 
 ; GLOBAL VARIABLES
-
+global Resolution4k := false
 global Mode := "auto" ; "manual" = hit F1 to calculate weights; "auto" = loop and check automatically.
 global SelectOptions := true ; true/false if false then options won't be clicked, but weight will still be calculated and displayed.
 global ControllerInput := true ; Will turn on clicking on top right corner to get rid of controller circle if true.
 global WinTitle := "ahk_exe The Slormancer.exe"
 global Path := "slormancer_img\"
 global Extension := ".png"
-global TopLeftClickPos := [150, 150]
+global NextWaveImg := "slormancer_img\next_wave.png"
+global AutoStartImg := "*25 slormancer_img\autostart.png"
+global ForgeIconImg := "slormancer_img\forge_icon.png"
+global TopLeftClickPos := [200, 200]
+global AutoStartBox := [1640, 300]
+global AutoStartBounds := [1590, 260, 1650, 360]
 global NextWaveButton := [1790, 300]
 global NextWaveBounds := [1650, 260, 1920, 360]
 global ForgeIconBounds := [1500, 0, 1700, 200]
 global LeftChallengeBounds := [450, 300, 750, 600]
 global LeftRewardBounds := [450, 650, 750, 800]
-global LeftDurationBounds := []
+global LeftDurationBounds := [450, 620, 750, 700]
 global MiddleChallengeBounds := [850, 300, 1150, 600]
 global MiddleRewardBounds := [850, 650, 1150, 800]
-global MiddleDurationBounds := []
+global MiddleDurationBounds := [850, 620, 1150, 700]
 global RightChallengeBounds := [1200, 300, 1500, 600]
 global RightRewardBounds := [1200, 650, 1500, 800]
-global RightDurationBounds := []
+global RightDurationBounds := [1200, 620, 1500, 700]
 global ToolTipTimeout := -30000
 global ToolTipPos := [5, 5]
+if (Resolution4k == true) {
+    Extension := "_4k.png"
+    NextWaveImg := "slormancer_img\next_wave_4k.png"
+    AutoStartImg := "*25 slormancer_img\autostart_4k.png"
+    ForgeIconImg := "slormancer_img\forge_icon_4k.png"
+    TopLeftClickPos := [350, 350]
+    AutoStartBox := [3265, 600]
+    AutoStartBounds := [3210, 545, 3310, 645]
+    NextWaveButton := [3560, 600]
+    NextWaveBounds := [3315, 540, 3830, 660]
+    ForgeIconBounds := [3190, 0, 3300, 145]
+    LeftChallengeBounds := [1100, 780, 1270, 970]
+    LeftRewardBounds := [1110, 1380, 1270, 1500]
+    LeftDurationBounds := [1050, 1270, 1315, 1320]
+    MiddleChallengeBounds := [1840, 780, 2000, 970]
+    MiddleRewardBounds := [1840, 1380, 2000, 1500]
+    MiddleDurationBounds := [1790, 1270, 2060, 1325]
+    RightChallengeBounds := [2570, 780, 2750, 970]
+    RightRewardBounds := [2570, 1380, 2750, 1500]
+    RightDurationBounds := [2520, 1270, 2790, 1325]
+    ToolTipPos := [70, 70]
+}
 global CursedChestWeight := 200 ; Allows attack speed curse buff to show
 global Challenges := [
     {name:"ace_combat", weight:0}, ; The following Wave has x additional Elite enemies.
@@ -153,66 +180,78 @@ ForgeSelector() {
     If WinExist(WinTitle) {
         WinActivate
     }
-    try {
-        if (ImageSearch(&FoundX, &FoundY, NextWaveBounds[1], NextWaveBounds[2], NextWaveBounds[3], NextWaveBounds[4], "slormancer_img\next_wave.png")) {
-            If WinExist(WinTitle) {
-                WinActivate
-                MouseMove NextWaveButton[1], NextWaveButton[2]
-                Click "down"
-                Sleep 10
-                Click "up"
+    if ((ImageSearch(&FoundX, &FoundY, AutoStartBounds[1], AutoStartBounds[2], AutoStartBounds[3], AutoStartBounds[4], AutoStartImg))) {
+        If WinExist(WinTitle) {
+            WinActivate
+            MouseMove AutoStartBox[1], AutoStartBox[2]
+            Click "down"
+            Sleep 10
+            Click "up"
+            Sleep 10
+            MouseMove NextWaveButton[1], NextWaveButton[2]
+            Click "down"
+            Sleep 10
+            Click "up"
+        } 
+    }
+    if (ImageSearch(&FoundX, &FoundY, NextWaveBounds[1], NextWaveBounds[2], NextWaveBounds[3], NextWaveBounds[4], NextWaveImg)) {
+        If WinExist(WinTitle) {
+            WinActivate
+            MouseMove NextWaveButton[1], NextWaveButton[2]
+            Click "down"
+            Sleep 10
+            Click "up"
+        }
+    }
+    if (!(ImageSearch(&FoundX, &FoundY, ForgeIconBounds[1], ForgeIconBounds[2], ForgeIconBounds[3], ForgeIconBounds[4], ForgeIconImg))) {
+        Sleep 1000
+        foundImages := ""
+        leftWeight := -1000
+        middleWeight := -1000
+        rightWeight := -1000
+        If (ControllerInput && WinExist(WinTitle)) {
+            WinActivate
+            MouseMove TopLeftClickPos[1], TopLeftClickPos[2]
+            Click "down"
+            Sleep 10
+            Click "up"
+        }
+        foundChallenge := ''
+        for index, value in Challenges {
+            foundChallenge := value.name
+            imagePath := Path foundChallenge Extension
+            if (ImageSearch(&FoundX1, &FoundY1, LeftChallengeBounds[1], LeftChallengeBounds[2], LeftChallengeBounds[3], LeftChallengeBounds[4], imagePath)) {
+                leftWeight := value.weight
+                foundImages := "1. " foundChallenge " | " value.weight
+                ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
+                SetTimer () => ToolTip(), ToolTipTimeOut
+                break
             }
         }
-        if (!(ImageSearch(&FoundX, &FoundY, ForgeIconBounds[1], ForgeIconBounds[2], ForgeIconBounds[3], ForgeIconBounds[4], "slormancer_img\forge_icon.png"))) {
-            Sleep 1000
-            foundImages := ""
-            leftWeight := -1000
-            middleWeight := -1000
-            rightWeight := -1000
-            If (ControllerInput && WinExist(WinTitle)) {
-                WinActivate
-                MouseMove TopLeftClickPos[1], TopLeftClickPos[2]
-                Click "down"
-                Sleep 10
-                Click "up"
-            }
-            foundChallenge := ''
-            for index, value in Challenges {
-                foundChallenge := value.name
-                imagePath := Path foundChallenge Extension
-                if (ImageSearch(&FoundX1, &FoundY1, LeftChallengeBounds[1], LeftChallengeBounds[2], LeftChallengeBounds[3], LeftChallengeBounds[4], imagePath)) {
-                    leftWeight := value.weight
-                    foundImages := "1. " foundChallenge " | " value.weight
-                    ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
-                    SetTimer () => ToolTip(), ToolTipTimeOut
-                    break
-                }
-            }
-            foundReward := ''
-            for index, value in Rewards {
-                foundReward := value.name
-                imagePath := Path foundReward Extension
-                if (ImageSearch(&FoundX1, &FoundY1, LeftRewardBounds[1], LeftRewardBounds[2], LeftRewardBounds[3], LeftRewardBounds[4], imagePath)) {
-                    if (foundChallenge == 'cursed_reward' && foundReward == 'reward_chest_quantity') {
-                        leftWeight := CursedChestWeight
-                    } else {
-                        leftWeight := leftWeight + value.weight
-                    }
-                    foundImages := foundImages "`n   +" foundReward " | " value.weight
-                    ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
-                    SetTimer () => ToolTip(), ToolTipTimeout
-                    break
-                }
-            }
-            for index, value in Duration {
-                imagePath := Path value.name Extension
-                if (ImageSearch(&FoundX1, &FoundY1, LeftDurationBounds[1], LeftDurationBounds[2], LeftDurationBounds[3], LeftDurationBounds[4], imagePath)) {
+        foundReward := ''
+        for index, value in Rewards {
+            foundReward := value.name
+            imagePath := Path foundReward Extension
+            if (ImageSearch(&FoundX1, &FoundY1, LeftRewardBounds[1], LeftRewardBounds[2], LeftRewardBounds[3], LeftRewardBounds[4], imagePath)) {
+                if (foundChallenge == 'cursed_reward' && foundReward == 'reward_chest_quantity') {
+                    leftWeight := CursedChestWeight
+                } else {
                     leftWeight := leftWeight + value.weight
-                    foundImages := foundImages "`n    +" value.name " | " value.weight
-                    ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
-                    SetTimer () => ToolTip(), ToolTipTimeout
-                    break
                 }
+                foundImages := foundImages "`n   +" foundReward " | " value.weight
+                ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
+                SetTimer () => ToolTip(), ToolTipTimeout
+                break
+            }
+        }
+        for index, value in Duration {
+            imagePath := Path value.name Extension
+            if (ImageSearch(&FoundX1, &FoundY1, LeftDurationBounds[1], LeftDurationBounds[2], LeftDurationBounds[3], LeftDurationBounds[4], imagePath)) {
+                leftWeight := leftWeight + value.weight
+                foundImages := foundImages "`n    +" value.name " | " value.weight
+                ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
+                SetTimer () => ToolTip(), ToolTipTimeout
+                break
             }
         }
         If (ControllerInput && WinExist(WinTitle)) {
@@ -361,11 +400,8 @@ ForgeSelector() {
             ToolTip "Images not found", ToolTipPos[1], ToolTipPos[2]
             SetTimer () => ToolTip(), ToolTipTimeout
         }
-        Sleep 100
     }
-    catch as exc {
-        MsgBox "Could not conduct the search due to the following error:`n" exc.Message
-    }
+    Sleep 100
 }
 
 ; LOOP FUNCTION
