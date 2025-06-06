@@ -81,12 +81,24 @@ global Challenges := [
     {name:"wild_beasts",weight:120}
 ]
 global Rewards := [
-    {name:"reward_goldus",weight:50},
-    {name:"reward_slorm",weight:20},
+    {name:"reward_adrianne",weight:10},
+    {name:"reward_astorias",weight:10},
+    {name:"reward_beigarth",weight:10},
+    {name:"reward_chest_effect",weight:10},
+    {name:"reward_chest_effect2",weight:70},
+    {name:"reward_chest_quality",weight:60},
+    {name:"reward_chest_quantity",weight:60},
+    {name:"reward_cory",weight:10},
+    {name:"reward_equipment",weight:30},
     {name:"reward_fragment",weight:30},
-    {name:"reward_slormline",weight:40},
+    {name:"reward_fulgurorn",weight:10},
+    {name:"reward_goldus",weight:50},
+    {name:"reward_hagan",weight:10},
+    {name:"reward_reaper_effect",weight:10},
+    {name:"reward_slorm",weight:20},
     {name:"reward_slormite",weight:40},
-    {name:"reward_equipment",weight:30}
+    {name:"reward_slormline",weight:40},
+    {name:"reward_smaloron",weight:10}
 ]
 
 
