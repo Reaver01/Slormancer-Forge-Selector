@@ -1,7 +1,7 @@
 #Requires AutoHotkey v2.0
 
 ; GLOBAL VARIABLES
-global Resolution4k := false
+global Resolution4k := true
 global Mode := "auto" ; "manual" = hit F1 to calculate weights; "auto" = loop and check automatically.
 global SelectOptions := true ; true/false if false then options won't be clicked, but weight will still be calculated and displayed.
 global ControllerInput := true ; Will turn on clicking on top right corner to get rid of controller circle if true.
@@ -20,12 +20,15 @@ global ForgeIconBounds := [1500, 0, 1700, 200]
 global LeftChallengeBounds := [450, 300, 750, 600]
 global LeftRewardBounds := [450, 650, 750, 800]
 global LeftDurationBounds := [450, 620, 750, 700]
+global LeftSelect := [600, 550]
 global MiddleChallengeBounds := [850, 300, 1150, 600]
 global MiddleRewardBounds := [850, 650, 1150, 800]
 global MiddleDurationBounds := [850, 620, 1150, 700]
+global MiddleSelect := [950, 550]
 global RightChallengeBounds := [1200, 300, 1500, 600]
 global RightRewardBounds := [1200, 650, 1500, 800]
 global RightDurationBounds := [1200, 620, 1500, 700]
+global RightSelect := [1330, 550]
 global ToolTipTimeout := -30000
 global ToolTipPos := [5, 5]
 if (Resolution4k == true) {
@@ -42,12 +45,15 @@ if (Resolution4k == true) {
     LeftChallengeBounds := [1100, 780, 1270, 970]
     LeftRewardBounds := [1110, 1380, 1270, 1500]
     LeftDurationBounds := [1050, 1270, 1315, 1320]
+	LeftSelect := [1200, 1200]
     MiddleChallengeBounds := [1840, 780, 2000, 970]
     MiddleRewardBounds := [1840, 1380, 2000, 1500]
     MiddleDurationBounds := [1790, 1270, 2060, 1325]
+	MiddleSelect := [1920, 1200]
     RightChallengeBounds := [2570, 780, 2750, 970]
     RightRewardBounds := [2570, 1380, 2750, 1500]
     RightDurationBounds := [2520, 1270, 2790, 1325]
+	RightSelect := [2650, 1200]
     ToolTipPos := [70, 70]
 }
 global CursedChestWeight := 200 ; Allows attack speed curse buff to show
@@ -354,7 +360,7 @@ ForgeSelector() {
             ) {
                 If WinExist(WinTitle) {
                     WinActivate
-                    MouseMove 600, 550
+                    MouseMove LeftSelect[1], LeftSelect[2] 
                     if (SelectOptions) {
                         Click "down"
                         Sleep 10
@@ -370,7 +376,7 @@ ForgeSelector() {
             ) {
                 If WinExist(WinTitle) {
                     WinActivate
-                    MouseMove 950, 550
+                    MouseMove MiddleSelect[1], MiddleSelect[2]
                     if (SelectOptions) {
                         Click "down"
                         Sleep 10
@@ -386,7 +392,7 @@ ForgeSelector() {
             ) {
                 If WinExist(WinTitle) {
                     WinActivate
-                    MouseMove 1330, 550
+                    MouseMove RightSelect[1], RightSelect[2]
                     if (SelectOptions) {
                         Click "down"
                         Sleep 10
