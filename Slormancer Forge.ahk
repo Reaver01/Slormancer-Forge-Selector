@@ -5,6 +5,7 @@ global Resolution4k := false
 global Mode := "auto" ; "manual" = hit F1 to calculate weights; "auto" = loop and check automatically.
 global SelectOptions := true ; true/false if false then options won't be clicked, but weight will still be calculated and displayed.
 global ControllerInput := true ; Will turn on clicking on top right corner to get rid of controller circle if true.
+global EnableOSD := true ; Will use the OSD instead of tooltips if true.
 global WinTitle := "ahk_exe The Slormancer.exe"
 global Path := "slormancer_img\"
 global Extension := ".png"
@@ -28,6 +29,8 @@ global RightRewardBounds := [1200, 650, 1500, 800]
 global RightDurationBounds := [1200, 620, 1500, 700]
 global ToolTipTimeout := -30000
 global ToolTipPos := [5, 5]
+global TitleBarOffset := 30 ; Additional offset for bordered windows
+global OsdSize := [240, 570]
 if (Resolution4k == true) {
     Extension := "_4k.png"
     NextWaveImg := "slormancer_img\next_wave_4k.png"
@@ -128,28 +131,28 @@ global Challenges := [
     {name:"wild_beasts", weight:100} ; Enemies have +x Armor and deal +x Skill Damage.
 ]
 global Rewards := [
-    {name:"reward_chest_effect", weight:0}, ; Random Chest Effect.
-    {name:"reward_chest_quality", weight:50}, ; War Chest Quality increases the overall quality of Equipment, Slormites, Slormelines and Fragments stored inside your War Chest upon looting its content.
-    {name:"reward_chest_quality_effect", weight:50}, ; Random Chest Quality Effect.
-    {name:"reward_chest_quantity", weight:50}, ; War Chest Quantity increases the quantity of everything that's inside your War Chest upon looting its content.
-    {name:"reward_chest_quantity_effect", weight:60}, ; Random Chest Quantity Effect.
-    {name:"reward_equipment", weight:20}, ; Increases the overall quality of Equipments stored inside your War Chest upon looting its content.
-    {name:"reward_fragment", weight:20}, ; Increases the overall quality of Fragments stored inside your War Chest upon looting its content.
-    {name:"reward_goldus", weight:40}, ; Increases the quantity of Goldus that's Inside your War Chest.
-    {name:"reward_goldus_effect", weight:40}, ; Random Goldus Effect.
-    {name:"reward_obelisk", weight:0}, ; Random Obelisk Modifier.
-    {name:"reward_slorm", weight:10}, ; Increases the quantity of Slorm that's Inside your War Chest.
-    {name:"reward_slorm_effect", weight: 50}, ; Random Slorm Modifier.
-    {name:"reward_slormite", weight:30}, ; Increases the overall quality of Slormites stored inside your War Chest upon looting its content.
-    {name:"reward_slormline", weight:30}, ; Increases the overall quality of Slormlines stored inside your War Chest upon looting its content.
-    {name:"reward_spirit_adrianne", weight:0}, ; Reapersmith Spirits are found inside The Great Forge.
-    {name:"reward_spirit_astorias", weight:0}, ; Reapersmith Spirits are found inside The Great Forge.
-    {name:"reward_spirit_beigarth", weight:0}, ; Reapersmith Spirits are found inside The Great Forge.
-    {name:"reward_spirit_cory", weight:0}, ; Reapersmith Spirits are found inside The Great Forge.
-    {name:"reward_spirit_effect", weight:0}, ; Random Reapersmith Spirit Effect.
-    {name:"reward_spirit_fulgurorn", weight:0}, ; Reapersmith Spirits are found inside The Great Forge.
-    {name:"reward_spirit_hagan", weight:0}, ; Reapersmith Spirits are found inside The Great Forge.
-    {name:"reward_spirit_smaloron", weight:0} ; Reapersmith Spirits are found inside The Great Forge.
+    {name:"reward_chest_effect", weight:0, count:0}, ; Random Chest Effect.
+    {name:"reward_chest_quality", weight:50, count:0}, ; War Chest Quality increases the overall quality of Equipment, Slormites, Slormelines and Fragments stored inside your War Chest upon looting its content.
+    {name:"reward_chest_quality_effect", weight:50, count:0}, ; Random Chest Quality Effect.
+    {name:"reward_chest_quantity", weight:50, count:0}, ; War Chest Quantity increases the quantity of everything that's inside your War Chest upon looting its content.
+    {name:"reward_chest_quantity_effect", weight:60, count:0}, ; Random Chest Quantity Effect.
+    {name:"reward_equipment", weight:20, count:0}, ; Increases the overall quality of Equipments stored inside your War Chest upon looting its content.
+    {name:"reward_fragment", weight:20, count:0}, ; Increases the overall quality of Fragments stored inside your War Chest upon looting its content.
+    {name:"reward_goldus", weight:40, count:0}, ; Increases the quantity of Goldus that's Inside your War Chest.
+    {name:"reward_goldus_effect", weight:40, count:0}, ; Random Goldus Effect.
+    {name:"reward_obelisk", weight:0, count:0}, ; Random Obelisk Modifier.
+    {name:"reward_slorm", weight:10, count:0}, ; Increases the quantity of Slorm that's Inside your War Chest.
+    {name:"reward_slorm_effect", weight: 50, count:0}, ; Random Slorm Modifier.
+    {name:"reward_slormite", weight:30, count:0}, ; Increases the overall quality of Slormites stored inside your War Chest upon looting its content.
+    {name:"reward_slormline", weight:30, count:0}, ; Increases the overall quality of Slormlines stored inside your War Chest upon looting its content.
+    {name:"reward_spirit_adrianne", weight:0, count:0}, ; Reapersmith Spirits are found inside The Great Forge.
+    {name:"reward_spirit_astorias", weight:0, count:0}, ; Reapersmith Spirits are found inside The Great Forge.
+    {name:"reward_spirit_beigarth", weight:0, count:0}, ; Reapersmith Spirits are found inside The Great Forge.
+    {name:"reward_spirit_cory", weight:0, count:0}, ; Reapersmith Spirits are found inside The Great Forge.
+    {name:"reward_spirit_effect", weight:0, count:0}, ; Random Reapersmith Spirit Effect.
+    {name:"reward_spirit_fulgurorn", weight:0, count:0}, ; Reapersmith Spirits are found inside The Great Forge.
+    {name:"reward_spirit_hagan", weight:0, count:0}, ; Reapersmith Spirits are found inside The Great Forge.
+    {name:"reward_spirit_smaloron", weight:0, count:0} ; Reapersmith Spirits are found inside The Great Forge.
 ]
 global Duration := [
 	{name:"duration3", weight:10},
@@ -158,8 +161,22 @@ global Duration := [
 	{name:"duration6", weight:40},
 	{name:"duration7", weight:50}
 ]
+global ImageError := false
+global PastRewardSelections := []
+global PreviousChoices := []
 
-ToolTip "Script Loaded", ToolTipPos[1], ToolTipPos[2]
+; On Screen Display
+global osdGui := Gui("+AlwaysOnTop -Caption +ToolWindow +LastFound +E0x20")
+osdGui.BackColor := "Black"
+osdGui.SetFont("s10 cWhite", "Consolas")
+global osdText := osdGui.Add("Text", "w" OsdSize[1] " h" OsdSize[2] " vOsdText Left")
+WinSetTransparent(100, osdGui.Hwnd)
+
+if (EnableOSD) {
+    UpdateOSD("Script Loaded")
+} else {
+    ToolTip "Script Loaded", ToolTipPos[1], ToolTipPos[2]
+}
 
 ; HOTKEYS
 
@@ -205,10 +222,15 @@ ForgeSelector() {
     }
     if (!(ImageSearch(&FoundX, &FoundY, ForgeIconBounds[1], ForgeIconBounds[2], ForgeIconBounds[3], ForgeIconBounds[4], ForgeIconImg))) {
         Sleep 1000
+        results := {
+            left: {challenge: "", reward: "", label: "", totalWeight: -1000}, 
+            middle: {challenge: "", reward: "", label: "", totalWeight: -1000}, 
+            right: {challenge: "", reward: "", label: "", totalWeight: -1000}, 
+        }
         foundImages := ""
-        leftWeight := -1000
-        middleWeight := -1000
-        rightWeight := -1000
+        results.left.totalWeight := -1000
+        results.middle.totalWeight := -1000
+        results.right.totalWeight := -1000
         If (ControllerInput && WinExist(WinTitle)) {
             WinActivate
             MouseMove TopLeftClickPos[1], TopLeftClickPos[2]
@@ -216,41 +238,51 @@ ForgeSelector() {
             Sleep 10
             Click "up"
         }
-        foundChallenge := ''
         for index, value in Challenges {
-            foundChallenge := value.name
-            imagePath := Path foundChallenge Extension
+            results.left.challenge := value.name
+            imagePath := Path value.name Extension
             if (ImageSearch(&FoundX1, &FoundY1, LeftChallengeBounds[1], LeftChallengeBounds[2], LeftChallengeBounds[3], LeftChallengeBounds[4], imagePath)) {
-                leftWeight := value.weight
-                foundImages := "1. " foundChallenge " | " value.weight
-                ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
-                SetTimer () => ToolTip(), ToolTipTimeOut
+                results.left.totalWeight := value.weight
+                if (EnableOSD) {
+                    results.left.label .= "1. " value.name " | " value.weight
+                } else {
+                    foundImages := "1. " value.name " | " value.weight
+                    ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
+                    SetTimer () => ToolTip(), ToolTipTimeOut
+                }
                 break
             }
         }
-        foundReward := ''
         for index, value in Rewards {
-            foundReward := value.name
-            imagePath := Path foundReward Extension
+            results.left.reward := value.name
+            imagePath := Path value.name Extension
             if (ImageSearch(&FoundX1, &FoundY1, LeftRewardBounds[1], LeftRewardBounds[2], LeftRewardBounds[3], LeftRewardBounds[4], imagePath)) {
-                if (foundChallenge == 'cursed_reward' && foundReward == 'reward_chest_quantity') {
-                    leftWeight := CursedChestWeight
+                if (results.left.challenge == 'cursed_reward' && value.name == 'reward_chest_quantity') {
+                    results.left.totalWeight := CursedChestWeight
                 } else {
-                    leftWeight := leftWeight + value.weight
+                    results.left.totalWeight += value.weight
                 }
-                foundImages := foundImages "`n   +" foundReward " | " value.weight
-                ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
-                SetTimer () => ToolTip(), ToolTipTimeout
+                if (EnableOSD) {
+                    results.left.label .= "`n   +" value.name " | " value.weight
+                } else {
+                    foundImages := foundImages "`n   +" value.name " | " value.weight
+                    ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
+                    SetTimer () => ToolTip(), ToolTipTimeout
+                }
                 break
             }
         }
         for index, value in Duration {
             imagePath := Path value.name Extension
             if (ImageSearch(&FoundX1, &FoundY1, LeftDurationBounds[1], LeftDurationBounds[2], LeftDurationBounds[3], LeftDurationBounds[4], imagePath)) {
-                leftWeight := leftWeight + value.weight
-                foundImages := foundImages "`n    +" value.name " | " value.weight
-                ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
-                SetTimer () => ToolTip(), ToolTipTimeout
+                results.left.totalWeight += value.weight
+                if (EnableOSD) {
+                    results.left.label .=  "`n    +" value.name " | " value.weight
+                } else {
+                    foundImages := foundImages "`n    +" value.name " | " value.weight
+                    ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
+                    SetTimer () => ToolTip(), ToolTipTimeout
+                }
                 break
             }
         }
@@ -261,41 +293,51 @@ ForgeSelector() {
             Sleep 10
             Click "up"
         }
-        foundChallenge := ''
         for index, value in Challenges {
-            foundChallenge := value.name
-            imagePath := Path foundChallenge Extension
+            results.middle.challenge := value.name
+            imagePath := Path value.name Extension
             if (ImageSearch(&FoundX1, &FoundY1, MiddleChallengeBounds[1], MiddleChallengeBounds[2], MiddleChallengeBounds[3], MiddleChallengeBounds[4], imagePath)) {
-                middleWeight := value.weight
-                foundImages := foundImages "`n2. " foundChallenge " | " value.weight
-                ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
-                SetTimer () => ToolTip(), ToolTipTimeout
+                results.middle.totalWeight := value.weight
+                if (EnableOSD) {
+                    results.middle.label .= "2. " value.name " | " value.weight
+                } else {
+                    foundImages := "2. " value.name " | " value.weight
+                    ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
+                    SetTimer () => ToolTip(), ToolTipTimeOut
+                }
                 break
             }
         }
-        foundReward := ''
         for index, value in Rewards {
-            foundReward := value.name
-            imagePath := Path foundReward Extension
+            results.middle.reward := value.name
+            imagePath := Path value.name Extension
             if (ImageSearch(&FoundX1, &FoundY1, MiddleRewardBounds[1], MiddleRewardBounds[2], MiddleRewardBounds[3], MiddleRewardBounds[4], imagePath)) {
-                if (foundChallenge == 'cursed_reward' && foundReward == 'reward_chest_quantity') {
-                    middleWeight := CursedChestWeight
+                if (results.middle.challenge == 'cursed_reward' && value.name == 'reward_chest_quantity') {
+                    results.middle.totalWeight := CursedChestWeight
                 } else {
-                    middleWeight := middleWeight + value.weight
+                    results.middle.totalWeight += value.weight
                 }
-                foundImages := foundImages "`n   +" foundReward " | " value.weight
-                ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
-                SetTimer () => ToolTip(), ToolTipTimeout
+                if (EnableOSD) {
+                    results.middle.label .= "`n   +" value.name " | " value.weight
+                } else {
+                    foundImages := foundImages "`n   +" value.name " | " value.weight
+                    ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
+                    SetTimer () => ToolTip(), ToolTipTimeout
+                }
                 break
             }
         }
         for index, value in Duration {
             imagePath := Path value.name Extension
             if (ImageSearch(&FoundX1, &FoundY1, MiddleDurationBounds[1], MiddleDurationBounds[2], MiddleDurationBounds[3], MiddleDurationBounds[4], imagePath)) {
-                middleWeight := middleWeight + value.weight
-                foundImages := foundImages "`n    +" value.name " | " value.weight
-                ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
-                SetTimer () => ToolTip(), ToolTipTimeout
+                results.middle.totalWeight := results.middle.totalWeight + value.weight
+                if (EnableOSD) {
+                    results.middle.label .= "`n   +" value.name " | " value.weight
+                } else {
+                    foundImages := foundImages "`n   +" value.name " | " value.weight
+                    ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
+                    SetTimer () => ToolTip(), ToolTipTimeout
+                }
                 break
             }
         }
@@ -306,51 +348,66 @@ ForgeSelector() {
             Sleep 10
             Click "up"
         }
-        foundChallenge := ''
         for index, value in Challenges {
-            foundChallenge := value.name
-            imagePath := Path foundChallenge Extension
+            results.right.challenge := value.name
+            imagePath := Path value.name Extension
             if (ImageSearch(&FoundX1, &FoundY1, RightChallengeBounds[1], RightChallengeBounds[2], RightChallengeBounds[3], RightChallengeBounds[4], imagePath)) {
-                rightWeight := value.weight
-                foundImages := foundImages "`n3. " foundChallenge " | " value.weight
-                ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
-                SetTimer () => ToolTip(), ToolTipTimeout
+                results.right.totalWeight := value.weight
+                if (EnableOSD) {
+                    results.right.label .= "3. " value.name " | " value.weight
+                } else {
+                    foundImages := "3. " value.name " | " value.weight
+                    ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
+                    SetTimer () => ToolTip(), ToolTipTimeOut
+                }
                 break
             }
         }
-        foundReward := ''
         for index, value in Rewards {
-            foundReward := value.name
-            imagePath := Path foundReward Extension
+            results.right.reward := value.name
+            imagePath := Path value.name Extension
             if (ImageSearch(&FoundX1, &FoundY1, RightRewardBounds[1], RightRewardBounds[2], RightRewardBounds[3], RightRewardBounds[4], imagePath)) {
-                if (foundChallenge == 'cursed_reward' && foundReward == 'reward_chest_quantity') {
-                    rightWeight := CursedChestWeight
+                if (results.right.challenge == 'cursed_reward' && value.name == 'reward_chest_quantity') {
+                    results.right.totalWeight := CursedChestWeight
                 } else {
-                    rightWeight := rightWeight + value.weight
+                    results.right.totalWeight += value.weight
                 }
-                foundImages := foundImages "`n   +" foundReward " | " value.weight
-                ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
-                SetTimer () => ToolTip(), ToolTipTimeout
+                if (EnableOSD) {
+                    results.right.label .= "`n   +" value.name " | " value.weight
+                } else {
+                    foundImages := foundImages "`n   +" value.name " | " value.weight
+                    ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
+                    SetTimer () => ToolTip(), ToolTipTimeout
+                }
                 break
             }
         }
         for index, value in Duration {
             imagePath := Path value.name Extension
             if (ImageSearch(&FoundX1, &FoundY1, RightDurationBounds[1], RightDurationBounds[2], RightDurationBounds[3], RightDurationBounds[4], imagePath)) {
-                rightWeight := rightWeight + value.weight
-                foundImages := foundImages "`n    +" value.name " | " value.weight
-                ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
-                SetTimer () => ToolTip(), ToolTipTimeout
+                results.right.totalWeight += value.weight
+                if (EnableOSD) {
+                    results.right.label .= "`n    +" value.name " | " value.weight
+                } else {
+                    foundImages := foundImages "`n   +" value.name " | " value.weight
+                    ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
+                    SetTimer () => ToolTip(), ToolTipTimeout
+                }
                 break
             }
         }
-        if (leftWeight > -1000 || middleWeight > -1000 || rightWeight > -1000) {
+        PreviousChoices.Push(results.right.label)
+        PreviousChoices.Push(results.middle.label)
+        PreviousChoices.Push(results.left.label)
+        UpdateOSD()
+        if (results.left.totalWeight > -1000 || results.middle.totalWeight > -1000 || results.right.totalWeight > -1000) {
+            ImageError := false
             SendMode "Input"
             if (
-                (leftWeight > middleWeight && leftWeight > rightWeight) ||
-                (leftWeight == middleWeight && leftWeight == rightWeight) ||
-                (leftWeight > middleWeight && leftWeight == rightWeight) ||
-                (leftWeight == middleWeight && leftWeight > rightWeight)
+                (results.left.totalWeight > results.middle.totalWeight && results.left.totalWeight > results.right.totalWeight) ||
+                (results.left.totalWeight == results.middle.totalWeight && results.left.totalWeight == results.right.totalWeight) ||
+                (results.left.totalWeight > results.middle.totalWeight && results.left.totalWeight == results.right.totalWeight) ||
+                (results.left.totalWeight == results.middle.totalWeight && results.left.totalWeight > results.right.totalWeight)
             ) {
                 If WinExist(WinTitle) {
                     WinActivate
@@ -359,14 +416,24 @@ ForgeSelector() {
                         Click "down"
                         Sleep 10
                         Click "up"
-                        ToolTip foundImages "`n`nPicked 1. | " leftWeight, ToolTipPos[1], ToolTipPos[2]
-                        SetTimer () => ToolTip(), ToolTipTimeout
+                        if (EnableOSD) {
+                            PastRewardSelections.Push(results.left.label)
+                            for reward in Rewards {
+                                if (results.left.reward = reward.name) {
+                                    reward.count += 1
+                                    break
+                                }
+                            }
+                        } else {
+                            ToolTip foundImages "`n`nPicked 1. | " results.left.totalWeight, ToolTipPos[1], ToolTipPos[2]
+                            SetTimer () => ToolTip(), ToolTipTimeout
+                        }
                     }
                 }
             } else if (
-                (middleWeight > leftWeight && middleWeight > rightWeight) ||
-                (middleWeight > leftWeight && middleWeight == rightWeight) ||
-                (middleWeight == leftWeight && middleWeight > rightWeight)
+                (results.middle.totalWeight > results.left.totalWeight && results.middle.totalWeight > results.right.totalWeight) ||
+                (results.middle.totalWeight > results.left.totalWeight && results.middle.totalWeight == results.right.totalWeight) ||
+                (results.middle.totalWeight == results.left.totalWeight && results.middle.totalWeight > results.right.totalWeight)
             ) {
                 If WinExist(WinTitle) {
                     WinActivate
@@ -375,14 +442,24 @@ ForgeSelector() {
                         Click "down"
                         Sleep 10
                         Click "up"
-                        ToolTip foundImages "`n`nPicked 2. | " middleWeight, ToolTipPos[1], ToolTipPos[2]
-                        SetTimer () => ToolTip(), ToolTipTimeout
+                        if (EnableOSD) {
+                            PastRewardSelections.Push(results.middle.label)
+                            for reward in Rewards {
+                                if (results.middle.reward = reward.name) {
+                                    reward.count += 1
+                                    break
+                                }
+                            }
+                        } else {
+                            ToolTip foundImages "`n`nPicked 2. | " results.middle.totalWeight, ToolTipPos[1], ToolTipPos[2]
+                            SetTimer () => ToolTip(), ToolTipTimeout
+                        }
                     }
                 }
             } else if (
-                (rightWeight > leftWeight && rightWeight > middleWeight) ||
-                (rightWeight > leftWeight && rightWeight == middleWeight) ||
-                (rightWeight == leftWeight && rightWeight > middleWeight)
+                (results.right.totalWeight > results.left.totalWeight && results.right.totalWeight > results.middle.totalWeight) ||
+                (results.right.totalWeight > results.left.totalWeight && results.right.totalWeight == results.middle.totalWeight) ||
+                (results.right.totalWeight == results.left.totalWeight && results.right.totalWeight > results.middle.totalWeight)
             ) {
                 If WinExist(WinTitle) {
                     WinActivate
@@ -391,24 +468,41 @@ ForgeSelector() {
                         Click "down"
                         Sleep 10
                         Click "up"
-                        ToolTip foundImages "`n`nPicked 3. | " rightWeight, ToolTipPos[1], ToolTipPos[2]
-                        SetTimer () => ToolTip(), ToolTipTimeout
+                        if (EnableOSD) {
+                            PastRewardSelections.Push(results.right.label)
+                            for reward in Rewards {
+                                if (results.right.reward = reward.name) {
+                                    reward.count += 1
+                                    break
+                                }
+                            }
+                        } else {
+                            ToolTip foundImages "`n`nPicked 3. | " results.right.totalWeight, ToolTipPos[1], ToolTipPos[2]
+                            SetTimer () => ToolTip(), ToolTipTimeout
+                        }
                     }
                 }
             }
         } else {
-            ToolTip "Images not found", ToolTipPos[1], ToolTipPos[2]
-            SetTimer () => ToolTip(), ToolTipTimeout
+            if (EnableOSD) {
+                ImageError := true
+                UpdateOSD()
+            } else {
+                ToolTip "Images not found", ToolTipPos[1], ToolTipPos[2]
+                SetTimer () => ToolTip(), ToolTipTimeout
+            }
         }
     }
     Sleep 100
 }
 
 ; LOOP FUNCTION
-
 ForgeLoop() {
     Loop {
         ForgeSelector
+        if (EnableOSD) {
+            UpdateOSD()
+        }
     }
 }
 
@@ -416,4 +510,54 @@ ForgeLoop() {
 
 if (Mode == "auto") {
     ForgeLoop
+}
+
+
+UpdateOSD(customText?) {
+    global osdGui, osdText, PastRewardSelections, WinTitle, Rewards, ImageError, PreviousChoices
+    if !WinExist(WinTitle)
+        return
+
+    outputText := ""
+    if (IsSet(customText)) {
+        outputText .= customText "`n"
+    }
+
+    recent := ""
+    loop Min(PastRewardSelections.Length, 5) {
+        recent := PastRewardSelections[PastRewardSelections.Length - A_Index + 1] "`n" recent
+    }
+
+    pastChoices := "Previous Options:"
+    loop Min(PreviousChoices.Length, 3) {
+        pastChoices := pastChoices "`n" PreviousChoices[PreviousChoices.Length - A_Index + 1]
+    }
+
+    summary := "`nReward Counts:`n"
+    for rw in Rewards {
+        summary .= rw.name ": " rw.count "`n"
+    }
+
+    failedImages := ""
+    if (ImageError) {
+        failedImages := "Failed to find images`n"
+    }
+    outputText := failedImages pastChoices "`nRecent Rewards: (Oldest to Newest)`n" recent summary
+
+    osdText.Text := outputText
+    WinGetPos(&x, &y, &w, &h, WinTitle)
+    
+    offsetY := ToolTipPos[2]
+    if IsWindowBordered(WinTitle)
+        offsetY += TitleBarOffset
+    osdGui.Show("x" (x + ToolTipPos[1]) " y" (y + offsetY))
+}
+
+; Function to determine if a window is bordered
+IsWindowBordered(hwnd) {
+    style := WinGetStyle(hwnd)
+    WS_BORDER     := 0x00800000
+    WS_CAPTION    := 0x00C00000  ; WS_BORDER | WS_DLGFRAME
+    WS_THICKFRAME := 0x00040000
+    return (style & WS_CAPTION) || (style & WS_THICKFRAME)
 }
