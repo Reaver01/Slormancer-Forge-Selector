@@ -18,6 +18,7 @@ if (Resolution4k == true) {
     global NextWaveButton := [3560, 600]
     global NextWaveBounds := [3315, 540, 3830, 660]
     global ForgeIconBounds := [3190, 0, 3300, 145]
+    global LeftOption := [1200, 1200]
     global LeftChallengeBounds := [1100, 780, 1270, 970]
     global LeftRewardBounds := [1110, 1380, 1270, 1500]
     global LeftDurationBounds := [1050, 1270, 1315, 1320]
