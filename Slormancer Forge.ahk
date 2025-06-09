@@ -5,7 +5,7 @@ global Resolution4k := false
 global Mode := "auto" ; "manual" = hit F1 to calculate weights; "auto" = loop and check automatically.
 global SelectOptions := true ; true/false if false then options won't be clicked, but weight will still be calculated and displayed.
 global ControllerInput := true ; Will turn on clicking on top right corner to get rid of controller circle if true.
-global EnableOSD := true ; Will use the OSD instead of tooltips if true.
+global EnableOSD := false ; Will use the OSD instead of tooltips if true.
 global WinTitle := "ahk_exe The Slormancer.exe"
 global Path := "slormancer_img\"
 global ToolTipTimeout := -30000
@@ -514,9 +514,6 @@ ForgeSelector() {
 ForgeLoop() {
     Loop {
         ForgeSelector
-        if (EnableOSD) {
-            UpdateOSD()
-        }
     }
 }
 
