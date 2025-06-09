@@ -440,7 +440,7 @@ ForgeSelector() {
                                 }
                             }
                         } else {
-                            ToolTip foundImages "`n`nPicked 1. | " results.left.totalWeight, ToolTipPos[1], ToolTipPos[2]
+                            ToolTip foundImages "`n`nPicked 1. " results.left.totalWeight, ToolTipPos[1], ToolTipPos[2]
                             SetTimer () => ToolTip(), ToolTipTimeout
                         }
                     }
@@ -466,7 +466,7 @@ ForgeSelector() {
                                 }
                             }
                         } else {
-                            ToolTip foundImages "`n`nPicked 2. | " results.middle.totalWeight, ToolTipPos[1], ToolTipPos[2]
+                            ToolTip foundImages "`n`nPicked 2. " results.middle.totalWeight, ToolTipPos[1], ToolTipPos[2]
                             SetTimer () => ToolTip(), ToolTipTimeout
                         }
                     }
