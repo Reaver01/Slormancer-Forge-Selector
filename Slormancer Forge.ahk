@@ -239,7 +239,6 @@ ForgeSelector() {
         results.middle.totalWeight := -1000
         results.right.totalWeight := -1000
         if (WinExist(WinTitle)) {
-
             WinActivate
             MouseMove TopLeftClickPos[1], TopLeftClickPos[2]
             if (ControllerInput) {
@@ -313,7 +312,7 @@ ForgeSelector() {
                 if (EnableOSD) {
                     results.middle.label .= "2. " value.name " | " value.weight
                 } else {
-                    foundImages := "2. " value.name " | " value.weight
+                    foundImages := foundImages "`n2. " value.name " | " value.weight
                     ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
                     SetTimer () => ToolTip(), ToolTipTimeOut
                 }
@@ -370,7 +369,7 @@ ForgeSelector() {
                 if (EnableOSD) {
                     results.right.label .= "3. " value.name " | " value.weight
                 } else {
-                    foundImages := "3. " value.name " | " value.weight
+                    foundImages := foundImages "`n3. " value.name " | " value.weight
                     ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
                     SetTimer () => ToolTip(), ToolTipTimeOut
                 }
@@ -413,7 +412,9 @@ ForgeSelector() {
         PreviousChoices.Push(results.right.label)
         PreviousChoices.Push(results.middle.label)
         PreviousChoices.Push(results.left.label)
-        UpdateOSD()
+        if (EnableOSD) {
+            UpdateOSD()
+        }
         if (results.left.totalWeight > -1000 || results.middle.totalWeight > -1000 || results.right.totalWeight > -1000) {
             ImageError := false
             SendMode "Input"
@@ -491,7 +492,7 @@ ForgeSelector() {
                                 }
                             }
                         } else {
-                            ToolTip foundImages "`n`nPicked 3. | " results.right.totalWeight, ToolTipPos[1], ToolTipPos[2]
+                            ToolTip foundImages "`n`nPicked 3. " results.right.totalWeight, ToolTipPos[1], ToolTipPos[2]
                             SetTimer () => ToolTip(), ToolTipTimeout
                         }
                     }
