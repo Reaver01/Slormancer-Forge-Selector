@@ -21,9 +21,11 @@ if (Resolution4k == true) {
     global LeftChallengeBounds := [1100, 780, 1270, 970]
     global LeftRewardBounds := [1110, 1380, 1270, 1500]
     global LeftDurationBounds := [1050, 1270, 1315, 1320]
+    global MiddleOption := [1920, 1200]
     global MiddleChallengeBounds := [1840, 780, 2000, 970]
     global MiddleRewardBounds := [1840, 1380, 2000, 1500]
     global MiddleDurationBounds := [1790, 1270, 2060, 1325]
+    global RightOption := [2650, 1200]
     global RightChallengeBounds := [2570, 780, 2750, 970]
     global RightRewardBounds := [2570, 1380, 2750, 1500]
     global RightDurationBounds := [2520, 1270, 2790, 1325]
@@ -39,12 +41,15 @@ if (Resolution4k == true) {
     global NextWaveButton := [1790, 300]
     global NextWaveBounds := [1650, 260, 1920, 360]
     global ForgeIconBounds := [1500, 0, 1700, 200]
+    global LeftOption := [600, 550]
     global LeftChallengeBounds := [450, 300, 750, 600]
     global LeftRewardBounds := [450, 650, 750, 800]
     global LeftDurationBounds := [450, 620, 750, 700]
+    global MiddleOption := [950, 550]
     global MiddleChallengeBounds := [850, 300, 1150, 600]
     global MiddleRewardBounds := [850, 650, 1150, 800]
     global MiddleDurationBounds := [850, 620, 1150, 700]
+    global RightOption := [1330, 550]
     global RightChallengeBounds := [1200, 300, 1500, 600]
     global RightRewardBounds := [1200, 650, 1500, 800]
     global RightDurationBounds := [1200, 620, 1500, 700]
@@ -211,12 +216,14 @@ ForgeSelector() {
         leftWeight := -1000
         middleWeight := -1000
         rightWeight := -1000
-        If (ControllerInput && WinExist(WinTitle)) {
+        if (WinExist(WinTitle)) {
             WinActivate
             MouseMove TopLeftClickPos[1], TopLeftClickPos[2]
-            Click "down"
-            Sleep 10
-            Click "up"
+            if (ControllerInput) {
+                Click "down"
+                Sleep 10
+                Click "up"
+            }
         }
         foundChallenge := ''
         for index, value in Challenges {
@@ -256,12 +263,14 @@ ForgeSelector() {
                 break
             }
         }
-        If (ControllerInput && WinExist(WinTitle)) {
+        if (WinExist(WinTitle)) {
             WinActivate
             MouseMove TopLeftClickPos[1], TopLeftClickPos[2]
-            Click "down"
-            Sleep 10
-            Click "up"
+            if (ControllerInput) {
+                Click "down"
+                Sleep 10
+                Click "up"
+            }
         }
         foundChallenge := ''
         for index, value in Challenges {
@@ -301,12 +310,14 @@ ForgeSelector() {
                 break
             }
         }
-        If (ControllerInput && WinExist(WinTitle)) {
+        if (WinExist(WinTitle)) {
             WinActivate
             MouseMove TopLeftClickPos[1], TopLeftClickPos[2]
-            Click "down"
-            Sleep 10
-            Click "up"
+            if (ControllerInput) {
+                Click "down"
+                Sleep 10
+                Click "up"
+            }
         }
         foundChallenge := ''
         for index, value in Challenges {
@@ -356,7 +367,7 @@ ForgeSelector() {
             ) {
                 If WinExist(WinTitle) {
                     WinActivate
-                    MouseMove 600, 550
+                    MouseMove LeftOption[1], LeftOption[2]
                     if (SelectOptions) {
                         Click "down"
                         Sleep 10
@@ -372,7 +383,7 @@ ForgeSelector() {
             ) {
                 If WinExist(WinTitle) {
                     WinActivate
-                    MouseMove 950, 550
+                    MouseMove MiddleOption[1], MiddleOption[2]
                     if (SelectOptions) {
                         Click "down"
                         Sleep 10
@@ -388,7 +399,7 @@ ForgeSelector() {
             ) {
                 If WinExist(WinTitle) {
                     WinActivate
-                    MouseMove 1330, 550
+                    MouseMove RightOption[1], RightOption[2]
                     if (SelectOptions) {
                         Click "down"
                         Sleep 10
