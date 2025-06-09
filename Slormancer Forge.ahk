@@ -1,61 +1,63 @@
 #Requires AutoHotkey v2.0
 
 ; GLOBAL VARIABLES
-global Resolution4k := true
+global Resolution4k := false
 global Mode := "auto" ; "manual" = hit F1 to calculate weights; "auto" = loop and check automatically.
 global SelectOptions := true ; true/false if false then options won't be clicked, but weight will still be calculated and displayed.
 global ControllerInput := true ; Will turn on clicking on top right corner to get rid of controller circle if true.
 global WinTitle := "ahk_exe The Slormancer.exe"
 global Path := "slormancer_img\"
-global Extension := ".png"
-global NextWaveImg := "slormancer_img\next_wave.png"
-global AutoStartImg := "*25 slormancer_img\autostart.png"
-global ForgeIconImg := "slormancer_img\forge_icon.png"
-global TopLeftClickPos := [200, 200]
-global AutoStartBox := [1640, 300]
-global AutoStartBounds := [1590, 260, 1650, 360]
-global NextWaveButton := [1790, 300]
-global NextWaveBounds := [1650, 260, 1920, 360]
-global ForgeIconBounds := [1500, 0, 1700, 200]
-global LeftChallengeBounds := [450, 300, 750, 600]
-global LeftRewardBounds := [450, 650, 750, 800]
-global LeftDurationBounds := [450, 620, 750, 700]
-global LeftSelect := [600, 550]
-global MiddleChallengeBounds := [850, 300, 1150, 600]
-global MiddleRewardBounds := [850, 650, 1150, 800]
-global MiddleDurationBounds := [850, 620, 1150, 700]
-global MiddleSelect := [950, 550]
-global RightChallengeBounds := [1200, 300, 1500, 600]
-global RightRewardBounds := [1200, 650, 1500, 800]
-global RightDurationBounds := [1200, 620, 1500, 700]
-global RightSelect := [1330, 550]
-global ToolTipTimeout := -30000
-global ToolTipPos := [5, 5]
 if (Resolution4k == true) {
-    Extension := "_4k.png"
-    NextWaveImg := "slormancer_img\next_wave_4k.png"
-    AutoStartImg := "*25 slormancer_img\autostart_4k.png"
-    ForgeIconImg := "slormancer_img\forge_icon_4k.png"
-    TopLeftClickPos := [350, 350]
-    AutoStartBox := [3265, 600]
-    AutoStartBounds := [3210, 545, 3310, 645]
-    NextWaveButton := [3560, 600]
-    NextWaveBounds := [3315, 540, 3830, 660]
-    ForgeIconBounds := [3190, 0, 3300, 145]
-    LeftChallengeBounds := [1100, 780, 1270, 970]
-    LeftRewardBounds := [1110, 1380, 1270, 1500]
-    LeftDurationBounds := [1050, 1270, 1315, 1320]
-	LeftSelect := [1200, 1200]
-    MiddleChallengeBounds := [1840, 780, 2000, 970]
-    MiddleRewardBounds := [1840, 1380, 2000, 1500]
-    MiddleDurationBounds := [1790, 1270, 2060, 1325]
-	MiddleSelect := [1920, 1200]
-    RightChallengeBounds := [2570, 780, 2750, 970]
-    RightRewardBounds := [2570, 1380, 2750, 1500]
-    RightDurationBounds := [2520, 1270, 2790, 1325]
-	RightSelect := [2650, 1200]
-    ToolTipPos := [70, 70]
+    global Extension := "_4k.png"
+    global NextWaveImg := "slormancer_img\next_wave_4k.png"
+    global AutoStartImg := "*25 slormancer_img\autostart_4k.png"
+    global ForgeIconImg := "slormancer_img\forge_icon_4k.png"
+    global TopLeftClickPos := [350, 350]
+    global AutoStartBox := [3265, 600]
+    global AutoStartBounds := [3210, 545, 3310, 645]
+    global NextWaveButton := [3560, 600]
+    global NextWaveBounds := [3315, 540, 3830, 660]
+    global ForgeIconBounds := [3190, 0, 3300, 145]
+    global LeftOption := [1200, 1200]
+    global LeftChallengeBounds := [1100, 780, 1270, 970]
+    global LeftRewardBounds := [1110, 1380, 1270, 1500]
+    global LeftDurationBounds := [1050, 1270, 1315, 1320]
+    global MiddleOption := [1920, 1200]
+    global MiddleChallengeBounds := [1840, 780, 2000, 970]
+    global MiddleRewardBounds := [1840, 1380, 2000, 1500]
+    global MiddleDurationBounds := [1790, 1270, 2060, 1325]
+    global RightOption := [2650, 1200]
+    global RightChallengeBounds := [2570, 780, 2750, 970]
+    global RightRewardBounds := [2570, 1380, 2750, 1500]
+    global RightDurationBounds := [2520, 1270, 2790, 1325]
+    global ToolTipPos := [70, 70]
+} else {
+    global Extension := ".png"
+    global NextWaveImg := "slormancer_img\next_wave.png"
+    global AutoStartImg := "*25 slormancer_img\autostart.png"
+    global ForgeIconImg := "slormancer_img\forge_icon.png"
+    global TopLeftClickPos := [200, 200]
+    global AutoStartBox := [1640, 300]
+    global AutoStartBounds := [1590, 260, 1650, 360]
+    global NextWaveButton := [1790, 300]
+    global NextWaveBounds := [1650, 260, 1920, 360]
+    global ForgeIconBounds := [1500, 0, 1700, 200]
+    global LeftOption := [600, 550]
+    global LeftChallengeBounds := [450, 300, 750, 600]
+    global LeftRewardBounds := [450, 650, 750, 800]
+    global LeftDurationBounds := [450, 620, 750, 700]
+    global MiddleOption := [950, 550]
+    global MiddleChallengeBounds := [850, 300, 1150, 600]
+    global MiddleRewardBounds := [850, 650, 1150, 800]
+    global MiddleDurationBounds := [850, 620, 1150, 700]
+    global RightOption := [1330, 550]
+    global RightChallengeBounds := [1200, 300, 1500, 600]
+    global RightRewardBounds := [1200, 650, 1500, 800]
+    global RightDurationBounds := [1200, 620, 1500, 700]
+    global ToolTipPos := [5, 5]
 }
+global ToolTipTimeout := -30000
+
 global CursedChestWeight := 200 ; Allows attack speed curse buff to show
 global Challenges := [
     {name:"ace_combat", weight:0}, ; The following Wave has x additional Elite enemies.
@@ -215,12 +217,14 @@ ForgeSelector() {
         leftWeight := -1000
         middleWeight := -1000
         rightWeight := -1000
-        If (ControllerInput && WinExist(WinTitle)) {
+        if (WinExist(WinTitle)) {
             WinActivate
             MouseMove TopLeftClickPos[1], TopLeftClickPos[2]
-            Click "down"
-            Sleep 10
-            Click "up"
+            if (ControllerInput) {
+                Click "down"
+                Sleep 10
+                Click "up"
+            }
         }
         foundChallenge := ''
         for index, value in Challenges {
@@ -260,12 +264,14 @@ ForgeSelector() {
                 break
             }
         }
-        If (ControllerInput && WinExist(WinTitle)) {
+        if (WinExist(WinTitle)) {
             WinActivate
             MouseMove TopLeftClickPos[1], TopLeftClickPos[2]
-            Click "down"
-            Sleep 10
-            Click "up"
+            if (ControllerInput) {
+                Click "down"
+                Sleep 10
+                Click "up"
+            }
         }
         foundChallenge := ''
         for index, value in Challenges {
@@ -305,12 +311,14 @@ ForgeSelector() {
                 break
             }
         }
-        If (ControllerInput && WinExist(WinTitle)) {
+        if (WinExist(WinTitle)) {
             WinActivate
             MouseMove TopLeftClickPos[1], TopLeftClickPos[2]
-            Click "down"
-            Sleep 10
-            Click "up"
+            if (ControllerInput) {
+                Click "down"
+                Sleep 10
+                Click "up"
+            }
         }
         foundChallenge := ''
         for index, value in Challenges {
@@ -360,7 +368,7 @@ ForgeSelector() {
             ) {
                 If WinExist(WinTitle) {
                     WinActivate
-                    MouseMove LeftSelect[1], LeftSelect[2] 
+                    MouseMove LeftOption[1], LeftOption[2]
                     if (SelectOptions) {
                         Click "down"
                         Sleep 10
@@ -376,7 +384,7 @@ ForgeSelector() {
             ) {
                 If WinExist(WinTitle) {
                     WinActivate
-                    MouseMove MiddleSelect[1], MiddleSelect[2]
+                    MouseMove MiddleOption[1], MiddleOption[2]
                     if (SelectOptions) {
                         Click "down"
                         Sleep 10
@@ -392,7 +400,7 @@ ForgeSelector() {
             ) {
                 If WinExist(WinTitle) {
                     WinActivate
-                    MouseMove RightSelect[1], RightSelect[2]
+                    MouseMove RightOption[1], RightOption[2]
                     if (SelectOptions) {
                         Click "down"
                         Sleep 10
