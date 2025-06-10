@@ -168,8 +168,12 @@ global Duration := [
 	{name:"duration6", weight:40},
 	{name:"duration7", weight:50}
 ]
+global Results := {
+    left: {challenge: "", reward: "", label: "", totalWeight: -1000, selected: false}, 
+    middle: {challenge: "", reward: "", label: "", totalWeight: -1000, selected: false}, 
+    right: {challenge: "", reward: "", label: "", totalWeight: -1000, selected: false}, 
+}
 global ImageError := false
-global PastRewardSelections := []
 global PreviousChoices := []
 
 ; On Screen Display
@@ -201,6 +205,7 @@ F5::Reload
 ; MAIN SELECTOR AND WEIGHTING FUNCTION
 
 ForgeSelector() {
+    global Results
     If WinExist(WinTitle) {
         WinActivate
     }
@@ -229,15 +234,13 @@ ForgeSelector() {
     }
     if (!(ImageSearch(&FoundX, &FoundY, ForgeIconBounds[1], ForgeIconBounds[2], ForgeIconBounds[3], ForgeIconBounds[4], ForgeIconImg))) {
         Sleep 1000
-        results := {
-            left: {challenge: "", reward: "", label: "", totalWeight: -1000}, 
-            middle: {challenge: "", reward: "", label: "", totalWeight: -1000}, 
-            right: {challenge: "", reward: "", label: "", totalWeight: -1000}, 
+        Results := {
+            left: {challenge: "", reward: "", label: "", totalWeight: -1000, selected: false}, 
+            middle: {challenge: "", reward: "", label: "", totalWeight: -1000, selected: false}, 
+            right: {challenge: "", reward: "", label: "", totalWeight: -1000, selected: false}, 
         }
         foundImages := ""
-        results.left.totalWeight := -1000
-        results.middle.totalWeight := -1000
-        results.right.totalWeight := -1000
+        PreviousChoices := []
         if (WinExist(WinTitle)) {
             WinActivate
             MouseMove TopLeftClickPos[1], TopLeftClickPos[2]
@@ -248,13 +251,12 @@ ForgeSelector() {
             }
         }
         for index, value in Challenges {
-            results.left.challenge := value.name
+            Results.left.challenge := value.name
             imagePath := Path value.name Extension
             if (ImageSearch(&FoundX1, &FoundY1, LeftChallengeBounds[1], LeftChallengeBounds[2], LeftChallengeBounds[3], LeftChallengeBounds[4], imagePath)) {
-                results.left.totalWeight := value.weight
-                if (EnableOSD) {
-                    results.left.label .= "1. " value.name " | " value.weight
-                } else {
+                Results.left.totalWeight := value.weight
+                Results.left.label .= "1. " value.name " | " value.weight
+                if (!EnableOSD) {
                     foundImages := "1. " value.name " | " value.weight
                     ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
                     SetTimer () => ToolTip(), ToolTipTimeOut
@@ -263,17 +265,16 @@ ForgeSelector() {
             }
         }
         for index, value in Rewards {
-            results.left.reward := value.name
+            Results.left.reward := value.name
             imagePath := Path value.name Extension
             if (ImageSearch(&FoundX1, &FoundY1, LeftRewardBounds[1], LeftRewardBounds[2], LeftRewardBounds[3], LeftRewardBounds[4], imagePath)) {
-                if (results.left.challenge == 'cursed_reward' && value.name == 'reward_chest_quantity') {
-                    results.left.totalWeight := CursedChestWeight
+                if (Results.left.challenge == 'cursed_reward' && value.name == 'reward_chest_quantity') {
+                    Results.left.totalWeight := CursedChestWeight
                 } else {
-                    results.left.totalWeight += value.weight
+                    Results.left.totalWeight += value.weight
                 }
-                if (EnableOSD) {
-                    results.left.label .= "`n   +" value.name " | " value.weight
-                } else {
+                Results.left.label .= "`n   +" value.name " | " value.weight
+                if (!EnableOSD) {
                     foundImages := foundImages "`n   +" value.name " | " value.weight
                     ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
                     SetTimer () => ToolTip(), ToolTipTimeout
@@ -284,10 +285,9 @@ ForgeSelector() {
         for index, value in Duration {
             imagePath := Path value.name Extension
             if (ImageSearch(&FoundX1, &FoundY1, LeftDurationBounds[1], LeftDurationBounds[2], LeftDurationBounds[3], LeftDurationBounds[4], imagePath)) {
-                results.left.totalWeight += value.weight
-                if (EnableOSD) {
-                    results.left.label .=  "`n    +" value.name " | " value.weight
-                } else {
+                Results.left.totalWeight += value.weight
+                Results.left.label .=  "`n    +" value.name " | " value.weight
+                if (!EnableOSD) {
                     foundImages := foundImages "`n    +" value.name " | " value.weight
                     ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
                     SetTimer () => ToolTip(), ToolTipTimeout
@@ -305,13 +305,12 @@ ForgeSelector() {
             }
         }
         for index, value in Challenges {
-            results.middle.challenge := value.name
+            Results.middle.challenge := value.name
             imagePath := Path value.name Extension
             if (ImageSearch(&FoundX1, &FoundY1, MiddleChallengeBounds[1], MiddleChallengeBounds[2], MiddleChallengeBounds[3], MiddleChallengeBounds[4], imagePath)) {
-                results.middle.totalWeight := value.weight
-                if (EnableOSD) {
-                    results.middle.label .= "2. " value.name " | " value.weight
-                } else {
+                Results.middle.totalWeight := value.weight
+                Results.middle.label .= "2. " value.name " | " value.weight
+                if (!EnableOSD) {
                     foundImages := foundImages "`n2. " value.name " | " value.weight
                     ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
                     SetTimer () => ToolTip(), ToolTipTimeOut
@@ -320,17 +319,16 @@ ForgeSelector() {
             }
         }
         for index, value in Rewards {
-            results.middle.reward := value.name
+            Results.middle.reward := value.name
             imagePath := Path value.name Extension
             if (ImageSearch(&FoundX1, &FoundY1, MiddleRewardBounds[1], MiddleRewardBounds[2], MiddleRewardBounds[3], MiddleRewardBounds[4], imagePath)) {
-                if (results.middle.challenge == 'cursed_reward' && value.name == 'reward_chest_quantity') {
-                    results.middle.totalWeight := CursedChestWeight
+                if (Results.middle.challenge == 'cursed_reward' && value.name == 'reward_chest_quantity') {
+                    Results.middle.totalWeight := CursedChestWeight
                 } else {
-                    results.middle.totalWeight += value.weight
+                    Results.middle.totalWeight += value.weight
                 }
-                if (EnableOSD) {
-                    results.middle.label .= "`n   +" value.name " | " value.weight
-                } else {
+                Results.middle.label .= "`n   +" value.name " | " value.weight
+                if (!EnableOSD) {
                     foundImages := foundImages "`n   +" value.name " | " value.weight
                     ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
                     SetTimer () => ToolTip(), ToolTipTimeout
@@ -341,10 +339,9 @@ ForgeSelector() {
         for index, value in Duration {
             imagePath := Path value.name Extension
             if (ImageSearch(&FoundX1, &FoundY1, MiddleDurationBounds[1], MiddleDurationBounds[2], MiddleDurationBounds[3], MiddleDurationBounds[4], imagePath)) {
-                results.middle.totalWeight := results.middle.totalWeight + value.weight
-                if (EnableOSD) {
-                    results.middle.label .= "`n   +" value.name " | " value.weight
-                } else {
+                Results.middle.totalWeight := Results.middle.totalWeight + value.weight
+                Results.middle.label .= "`n   +" value.name " | " value.weight
+                if (!EnableOSD) {
                     foundImages := foundImages "`n   +" value.name " | " value.weight
                     ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
                     SetTimer () => ToolTip(), ToolTipTimeout
@@ -362,13 +359,12 @@ ForgeSelector() {
             }
         }
         for index, value in Challenges {
-            results.right.challenge := value.name
+            Results.right.challenge := value.name
             imagePath := Path value.name Extension
             if (ImageSearch(&FoundX1, &FoundY1, RightChallengeBounds[1], RightChallengeBounds[2], RightChallengeBounds[3], RightChallengeBounds[4], imagePath)) {
-                results.right.totalWeight := value.weight
-                if (EnableOSD) {
-                    results.right.label .= "3. " value.name " | " value.weight
-                } else {
+                Results.right.totalWeight := value.weight
+                Results.right.label .= "3. " value.name " | " value.weight
+                if (!EnableOSD) {
                     foundImages := foundImages "`n3. " value.name " | " value.weight
                     ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
                     SetTimer () => ToolTip(), ToolTipTimeOut
@@ -377,17 +373,16 @@ ForgeSelector() {
             }
         }
         for index, value in Rewards {
-            results.right.reward := value.name
+            Results.right.reward := value.name
             imagePath := Path value.name Extension
             if (ImageSearch(&FoundX1, &FoundY1, RightRewardBounds[1], RightRewardBounds[2], RightRewardBounds[3], RightRewardBounds[4], imagePath)) {
-                if (results.right.challenge == 'cursed_reward' && value.name == 'reward_chest_quantity') {
-                    results.right.totalWeight := CursedChestWeight
+                if (Results.right.challenge == 'cursed_reward' && value.name == 'reward_chest_quantity') {
+                    Results.right.totalWeight := CursedChestWeight
                 } else {
-                    results.right.totalWeight += value.weight
+                    Results.right.totalWeight += value.weight
                 }
-                if (EnableOSD) {
-                    results.right.label .= "`n   +" value.name " | " value.weight
-                } else {
+                Results.right.label .= "`n   +" value.name " | " value.weight
+                if (!EnableOSD) {
                     foundImages := foundImages "`n   +" value.name " | " value.weight
                     ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
                     SetTimer () => ToolTip(), ToolTipTimeout
@@ -398,10 +393,9 @@ ForgeSelector() {
         for index, value in Duration {
             imagePath := Path value.name Extension
             if (ImageSearch(&FoundX1, &FoundY1, RightDurationBounds[1], RightDurationBounds[2], RightDurationBounds[3], RightDurationBounds[4], imagePath)) {
-                results.right.totalWeight += value.weight
-                if (EnableOSD) {
-                    results.right.label .= "`n    +" value.name " | " value.weight
-                } else {
+                Results.right.totalWeight += value.weight
+                Results.right.label .= "`n    +" value.name " | " value.weight
+                if (!EnableOSD) {
                     foundImages := foundImages "`n   +" value.name " | " value.weight
                     ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
                     SetTimer () => ToolTip(), ToolTipTimeout
@@ -409,20 +403,17 @@ ForgeSelector() {
                 break
             }
         }
-        PreviousChoices.Push(results.right.label)
-        PreviousChoices.Push(results.middle.label)
-        PreviousChoices.Push(results.left.label)
-        if (EnableOSD) {
-            UpdateOSD()
-        }
-        if (results.left.totalWeight > -1000 || results.middle.totalWeight > -1000 || results.right.totalWeight > -1000) {
+        PreviousChoices.Push(Results.right.label)
+        PreviousChoices.Push(Results.middle.label)
+        PreviousChoices.Push(Results.left.label)
+        if (Results.left.totalWeight > -1000 || Results.middle.totalWeight > -1000 || Results.right.totalWeight > -1000) {
             ImageError := false
             SendMode "Input"
             if (
-                (results.left.totalWeight > results.middle.totalWeight && results.left.totalWeight > results.right.totalWeight) ||
-                (results.left.totalWeight == results.middle.totalWeight && results.left.totalWeight == results.right.totalWeight) ||
-                (results.left.totalWeight > results.middle.totalWeight && results.left.totalWeight == results.right.totalWeight) ||
-                (results.left.totalWeight == results.middle.totalWeight && results.left.totalWeight > results.right.totalWeight)
+                (Results.left.totalWeight > Results.middle.totalWeight && Results.left.totalWeight > Results.right.totalWeight) ||
+                (Results.left.totalWeight == Results.middle.totalWeight && Results.left.totalWeight == Results.right.totalWeight) ||
+                (Results.left.totalWeight > Results.middle.totalWeight && Results.left.totalWeight == Results.right.totalWeight) ||
+                (Results.left.totalWeight == Results.middle.totalWeight && Results.left.totalWeight > Results.right.totalWeight)
             ) {
                 If WinExist(WinTitle) {
                     WinActivate
@@ -432,23 +423,17 @@ ForgeSelector() {
                         Sleep 10
                         Click "up"
                         if (EnableOSD) {
-                            PastRewardSelections.Push(results.left.label)
-                            for reward in Rewards {
-                                if (results.left.reward = reward.name) {
-                                    reward.count += 1
-                                    break
-                                }
-                            }
+                            Results.left.selected := true
                         } else {
-                            ToolTip foundImages "`n`nPicked 1. " results.left.totalWeight, ToolTipPos[1], ToolTipPos[2]
+                            ToolTip foundImages "`n`nPicked " Results.left.label, ToolTipPos[1], ToolTipPos[2]
                             SetTimer () => ToolTip(), ToolTipTimeout
                         }
                     }
                 }
             } else if (
-                (results.middle.totalWeight > results.left.totalWeight && results.middle.totalWeight > results.right.totalWeight) ||
-                (results.middle.totalWeight > results.left.totalWeight && results.middle.totalWeight == results.right.totalWeight) ||
-                (results.middle.totalWeight == results.left.totalWeight && results.middle.totalWeight > results.right.totalWeight)
+                (Results.middle.totalWeight > Results.left.totalWeight && Results.middle.totalWeight > Results.right.totalWeight) ||
+                (Results.middle.totalWeight > Results.left.totalWeight && Results.middle.totalWeight == Results.right.totalWeight) ||
+                (Results.middle.totalWeight == Results.left.totalWeight && Results.middle.totalWeight > Results.right.totalWeight)
             ) {
                 If WinExist(WinTitle) {
                     WinActivate
@@ -458,23 +443,17 @@ ForgeSelector() {
                         Sleep 10
                         Click "up"
                         if (EnableOSD) {
-                            PastRewardSelections.Push(results.middle.label)
-                            for reward in Rewards {
-                                if (results.middle.reward = reward.name) {
-                                    reward.count += 1
-                                    break
-                                }
-                            }
+                            Results.middle.selected := true
                         } else {
-                            ToolTip foundImages "`n`nPicked 2. " results.middle.totalWeight, ToolTipPos[1], ToolTipPos[2]
+                            ToolTip foundImages "`n`nPicked " Results.middle.label, ToolTipPos[1], ToolTipPos[2]
                             SetTimer () => ToolTip(), ToolTipTimeout
                         }
                     }
                 }
             } else if (
-                (results.right.totalWeight > results.left.totalWeight && results.right.totalWeight > results.middle.totalWeight) ||
-                (results.right.totalWeight > results.left.totalWeight && results.right.totalWeight == results.middle.totalWeight) ||
-                (results.right.totalWeight == results.left.totalWeight && results.right.totalWeight > results.middle.totalWeight)
+                (Results.right.totalWeight > Results.left.totalWeight && Results.right.totalWeight > Results.middle.totalWeight) ||
+                (Results.right.totalWeight > Results.left.totalWeight && Results.right.totalWeight == Results.middle.totalWeight) ||
+                (Results.right.totalWeight == Results.left.totalWeight && Results.right.totalWeight > Results.middle.totalWeight)
             ) {
                 If WinExist(WinTitle) {
                     WinActivate
@@ -484,15 +463,9 @@ ForgeSelector() {
                         Sleep 10
                         Click "up"
                         if (EnableOSD) {
-                            PastRewardSelections.Push(results.right.label)
-                            for reward in Rewards {
-                                if (results.right.reward = reward.name) {
-                                    reward.count += 1
-                                    break
-                                }
-                            }
+                            Results.right.selected := true
                         } else {
-                            ToolTip foundImages "`n`nPicked 3. " results.right.totalWeight, ToolTipPos[1], ToolTipPos[2]
+                            ToolTip foundImages "`n`nPicked " Results.right.label, ToolTipPos[1], ToolTipPos[2]
                             SetTimer () => ToolTip(), ToolTipTimeout
                         }
                     }
@@ -501,11 +474,13 @@ ForgeSelector() {
         } else {
             if (EnableOSD) {
                 ImageError := true
-                UpdateOSD()
             } else {
                 ToolTip "Images not found", ToolTipPos[1], ToolTipPos[2]
                 SetTimer () => ToolTip(), ToolTipTimeout
             }
+        }
+        if (EnableOSD) {
+            UpdateOSD()
         }
     }
     Sleep 100
@@ -526,7 +501,8 @@ if (Mode == "auto") {
 
 
 UpdateOSD(customText?) {
-    global osdGui, osdText, PastRewardSelections, WinTitle, Rewards, ImageError, PreviousChoices
+    Sleep 10
+    global osdGui, osdText, WinTitle, Rewards, ImageError, PreviousChoices
     if !WinExist(WinTitle)
         return
 
@@ -535,26 +511,36 @@ UpdateOSD(customText?) {
         outputText .= customText "`n"
     }
 
-    recent := ""
-    loop Min(PastRewardSelections.Length, 5) {
-        recent := PastRewardSelections[PastRewardSelections.Length - A_Index + 1] "`n" recent
+    failedImages := ""
+    if (ImageError) {
+        failedImages := "Failed to find images`n"
     }
-
+    
     pastChoices := "Previous Options:"
     loop Min(PreviousChoices.Length, 3) {
         pastChoices := pastChoices "`n" PreviousChoices[PreviousChoices.Length - A_Index + 1]
     }
 
-    summary := "`nReward Counts:`n"
+    recent := "`n`nLast Selected Reward:"
+    for key, result in Results.OwnProps() {
+        if (result.selected) {
+            recent .= "`n" result.label
+        }
+        
+        for reward in Rewards {
+            if (result.reward = reward.name) {
+                reward.count += 1
+                break
+            }
+        }
+    }
+
+    summary := "`n`nReward Counts:`n"
     for rw in Rewards {
         summary .= rw.name ": " rw.count "`n"
     }
 
-    failedImages := ""
-    if (ImageError) {
-        failedImages := "Failed to find images`n"
-    }
-    outputText := failedImages pastChoices "`nRecent Rewards: (Oldest to Newest)`n" recent summary
+    outputText := failedImages pastChoices recent summary
 
     osdText.Text := outputText
     WinGetPos(&x, &y, &w, &h, WinTitle)
