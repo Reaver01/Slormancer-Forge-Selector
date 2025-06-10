@@ -240,7 +240,6 @@ ForgeSelector() {
             right: {challenge: "", reward: "", label: "", totalWeight: -1000, selected: false}, 
         }
         foundImages := ""
-        PreviousChoices := []
         if (WinExist(WinTitle)) {
             WinActivate
             MouseMove TopLeftClickPos[1], TopLeftClickPos[2]
