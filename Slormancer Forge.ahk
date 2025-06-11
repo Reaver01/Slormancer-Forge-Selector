@@ -17,8 +17,7 @@ if (Resolution4k == true) {
     global AutoStartImg := "*25 slormancer_img\autostart_4k.png"
     global ForgeIconImg := "slormancer_img\forge_icon_4k.png"
     global MenuExitImg := "slormancer_img\menu_exit_4k.png"
-    global MenuExitBounds := []
-    global MenuExitClick := []
+    global MenuExitBounds := [3620, 78, 3758, 266]
     global TopLeftClickPos := [350, 350]
     global AutoStartBox := [3265, 600]
     global AutoStartBounds := [3210, 545, 3310, 645]
@@ -45,7 +44,6 @@ if (Resolution4k == true) {
     global ForgeIconImg := "slormancer_img\forge_icon.png"
     global MenuExitImg := "slormancer_img\menu_exit.png"
     global MenuExitBounds := [1810, 39, 1879, 133]
-    global MenuExitClick := [1844, 86]
     global TopLeftClickPos := [200, 200]
     global AutoStartBox := [1640, 300]
     global AutoStartBounds := [1590, 260, 1650, 360]
