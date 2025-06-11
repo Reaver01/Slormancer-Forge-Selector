@@ -10,7 +10,7 @@ global WinTitle := "ahk_exe The Slormancer.exe"
 global Path := "slormancer_img\"
 global ToolTipTimeout := -30000
 global TitleBarOffset := 30 ; Additional offset for bordered windows
-global OsdSize := [240, 590]
+global OsdSize := [220, 590]
 if (Resolution4k == true) {
     global Extension := "_4k.png"
     global NextWaveImg := "slormancer_img\next_wave_4k.png"
@@ -527,7 +527,7 @@ UpdateOSD(customText?) {
         }
         
         for reward in Rewards {
-            if (result.reward = reward.name) {
+            if (result.reward != "" && result.reward == reward.name) {
                 reward.count += 1
                 break
             }
