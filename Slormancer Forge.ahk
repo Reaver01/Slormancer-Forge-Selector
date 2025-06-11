@@ -118,13 +118,13 @@ global Challenges := [
     {display_name:"Shadow Curse", file_name:"shadow_curse", weight:80}, ; Every x seconds, a Shadow Symbol appears next to you. The Shadow Symbol lasts x seconds and deals x Shadow Damage the first time you walk onto it.
     {display_name:"Shadow Strike", file_name:"shadow_strike", weight:90}, ; Enemies deal x Shadow Damage and have x Chance to apply Shadow Confusion for the next x seconds.
     {display_name:"Side Storm", file_name:"side_storm", weight:100}, ; Whenever they attack, Enemies create x Lightning Bolts on their sides dealing x Lightning Damage to Heroes and Minions hit.
-    {display_name:"The Siege Leader: Alacrity", file_name:"siege_alacrity", weight:50}, ; The Siege Leader has +x Attack Speed.
-    {display_name:"The Siege Leader: Barrage", file_name:"siege_barrage", weight:50}, ; The Siege Leader has new Attack Patterns.
-    {display_name:"The Siege Leader: Brutality", file_name:"siege_brutality", weight:50}, ; The Siege Leader has +x Increased Damage.
-    {display_name:"The Siege Leader: Dominance", file_name:"siege_dominance", weight:50}, ; The Siege Leader has +x Max Life.
-    {display_name:"The Siege Leader: Escort", file_name:"siege_escort", weight:50}, ; The Siege Leader is escorted by x Elite Enemies.
-    {display_name:"The Siege Leader: Quiver", file_name:"siege_quiver", weight:50}, ; The Siege Leader has +x Additional Projectile.
-    {display_name:"The Siege Leader: Reinforcements", file_name:"siege_reinforcements", weight:50}, ; The Siege Leader continuously calls upon allies during the fight.
+    {display_name:"Siege: Alacrity", file_name:"siege_alacrity", weight:50}, ; The Siege Leader has +x Attack Speed.
+    {display_name:"Siege: Barrage", file_name:"siege_barrage", weight:50}, ; The Siege Leader has new Attack Patterns.
+    {display_name:"Siege: Brutality", file_name:"siege_brutality", weight:50}, ; The Siege Leader has +x Increased Damage.
+    {display_name:"Siege: Dominance", file_name:"siege_dominance", weight:50}, ; The Siege Leader has +x Max Life.
+    {display_name:"Siege: Escort", file_name:"siege_escort", weight:50}, ; The Siege Leader is escorted by x Elite Enemies.
+    {display_name:"Siege: Quiver", file_name:"siege_quiver", weight:50}, ; The Siege Leader has +x Additional Projectile.
+    {display_name:"Siege: Reinforcements", file_name:"siege_reinforcements", weight:50}, ; The Siege Leader continuously calls upon allies during the fight.
     {display_name:"Slippery Ice", file_name:"slippery_ice", weight:100}, ; The entire area is covered in Slippery Ice. While standing on Slippery Ice area, you slip...
     {display_name:"Let. Them. Come.", file_name:"start_let_them_come", weight:100}, ; Each Wave, enemies will come from 6 different locations.
     {display_name:"Open the Gates!", file_name:"start_open_the_gates", weight:0}, ; Each Wave, enemies will come from 4 different locations.
