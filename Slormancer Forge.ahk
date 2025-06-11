@@ -10,7 +10,7 @@ global WinTitle := "ahk_exe The Slormancer.exe"
 global Path := "slormancer_img\"
 global ToolTipTimeout := -30000
 global TitleBarOffset := 30 ; Additional offset for bordered windows
-global OsdSize := [220, 615]
+global OsdSize := [220, 630]
 if (Resolution4k == true) {
     global Extension := "_4k.png"
     global NextWaveImg := "slormancer_img\next_wave_4k.png"
@@ -157,6 +157,7 @@ global Rewards := [
     {display_name:"Slorm Effect", file_name:"reward_slorm_effect", weight: 50, count:0}, ; Random Slorm Modifier.
     {display_name:"Slormite", file_name:"reward_slormite", weight:30, count:0}, ; Increases the overall quality of Slormites stored inside your War Chest upon looting its content.
     {display_name:"Slormline", file_name:"reward_slormline", weight:30, count:0}, ; Increases the overall quality of Slormlines stored inside your War Chest upon looting its content.
+    {display_name:"Slormline Effect", file_name:"reward_slormline_effect", weight:30, count:0}, ; Random Slormline Modifier.
     {display_name:"Adrianne Spirit", file_name:"reward_spirit_adrianne", weight:0, count:0}, ; Reapersmith Spirits are found inside The Great Forge.
     {display_name:"Astorias Spirit", file_name:"reward_spirit_astorias", weight:0, count:0}, ; Reapersmith Spirits are found inside The Great Forge.
     {display_name:"Beigarth Spirit", file_name:"reward_spirit_beigarth", weight:0, count:0}, ; Reapersmith Spirits are found inside The Great Forge.
