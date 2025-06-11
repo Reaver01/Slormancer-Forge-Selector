@@ -5,12 +5,12 @@ global Resolution4k := false
 global Mode := "auto" ; "manual" = hit F1 to calculate weights; "auto" = loop and check automatically.
 global SelectOptions := true ; true/false if false then options won't be clicked, but weight will still be calculated and displayed.
 global ControllerInput := true ; Will turn on clicking on top right corner to get rid of controller circle if true.
-global EnableOSD := false ; Will use the OSD instead of tooltips if true.
+global EnableOSD := true ; Will use the OSD instead of tooltips if true.
 global WinTitle := "ahk_exe The Slormancer.exe"
 global Path := "slormancer_img\"
 global ToolTipTimeout := -30000
 global TitleBarOffset := 30 ; Additional offset for bordered windows
-global OsdSize := [240, 570]
+global OsdSize := [240, 590]
 if (Resolution4k == true) {
     global Extension := "_4k.png"
     global NextWaveImg := "slormancer_img\next_wave_4k.png"
@@ -285,9 +285,9 @@ ForgeSelector() {
             imagePath := Path value.name Extension
             if (ImageSearch(&FoundX1, &FoundY1, LeftDurationBounds[1], LeftDurationBounds[2], LeftDurationBounds[3], LeftDurationBounds[4], imagePath)) {
                 Results.left.totalWeight += value.weight
-                Results.left.label .=  "`n    +" value.name " | " value.weight
+                Results.left.label .=  "`n   +" value.name " | " value.weight
                 if (!EnableOSD) {
-                    foundImages := foundImages "`n    +" value.name " | " value.weight
+                    foundImages := foundImages "`n   +" value.name " | " value.weight
                     ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
                     SetTimer () => ToolTip(), ToolTipTimeout
                 }
@@ -393,7 +393,7 @@ ForgeSelector() {
             imagePath := Path value.name Extension
             if (ImageSearch(&FoundX1, &FoundY1, RightDurationBounds[1], RightDurationBounds[2], RightDurationBounds[3], RightDurationBounds[4], imagePath)) {
                 Results.right.totalWeight += value.weight
-                Results.right.label .= "`n    +" value.name " | " value.weight
+                Results.right.label .= "`n   +" value.name " | " value.weight
                 if (!EnableOSD) {
                     foundImages := foundImages "`n   +" value.name " | " value.weight
                     ToolTip foundImages, ToolTipPos[1], ToolTipPos[2]
