@@ -16,6 +16,9 @@ if (Resolution4k == true) {
     global NextWaveImg := "slormancer_img\next_wave_4k.png"
     global AutoStartImg := "*25 slormancer_img\autostart_4k.png"
     global ForgeIconImg := "slormancer_img\forge_icon_4k.png"
+    global MenuExitImg := "slormancer_img\menu_exit_4k.png"
+    global MenuExitBounds := []
+    global MenuExitClick := []
     global TopLeftClickPos := [350, 350]
     global AutoStartBox := [3265, 600]
     global AutoStartBounds := [3210, 545, 3310, 645]
@@ -40,6 +43,9 @@ if (Resolution4k == true) {
     global NextWaveImg := "slormancer_img\next_wave.png"
     global AutoStartImg := "*25 slormancer_img\autostart.png"
     global ForgeIconImg := "slormancer_img\forge_icon.png"
+    global MenuExitImg := "slormancer_img\menu_exit.png"
+    global MenuExitBounds := [1810, 39, 1879, 133]
+    global MenuExitClick := [1844, 86]
     global TopLeftClickPos := [200, 200]
     global AutoStartBox := [1640, 300]
     global AutoStartBounds := [1590, 260, 1650, 360]
@@ -193,16 +199,32 @@ if (EnableOSD) {
 
 ; HOTKEYS
 
-F1::ForgeSelector
+$Escape::{
+    SendInput("{Escape}")
+    Sleep 1000
+    if (ImageSearch(&FoundX, &FoundY, MenuExitBounds[1], MenuExitBounds[2], MenuExitBounds[3], MenuExitBounds[4], MenuExitImg)) {
+        if (A_IsPaused == 0) {
+            ToolTip "Script Paused", ToolTipPos[1], ToolTipPos[2]
+            Pause -1
+        }
+    } else {
+        if (A_IsPaused == 1) {
+            ToolTip "", ToolTipPos[1], ToolTipPos[2]
+            Pause -1
+        }
+    }
+}
 F3::{
     if (A_IsPaused == 0) {
         ToolTip "Script Paused", ToolTipPos[1], ToolTipPos[2]
     } else {
+        Sleep 1000
         ToolTip "", ToolTipPos[1], ToolTipPos[2]
     }
     Pause -1
 }
 F5::Reload
+F12::ForgeSelector
 
 ; MAIN SELECTOR AND WEIGHTING FUNCTION
 
